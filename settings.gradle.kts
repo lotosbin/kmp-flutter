@@ -25,6 +25,8 @@ dependencyResolutionManagement {
             }
         }
         mavenCentral()
+        maven("https://storage.googleapis.com/download.flutter.io")// for flutter
+        maven("demo/module/build/host/outputs/repo") // flutter module generated repo path
     }
 }
 
