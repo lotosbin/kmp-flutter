@@ -7,7 +7,7 @@ support targets:
 - [ ] jvm
 - [ ] native
   - [ ] apple
-    - [ ] ios
+    - [x] ios
 - [ ] web
   - [ ] js
   - [ ] wasmJs
