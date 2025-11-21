@@ -11,6 +11,21 @@ support targets:
 - [ ] web
   - [ ] js
   - [ ] wasmJs
+  - 
+
+## 使用
+```kotlin
+@Composable
+fun App(){
+    MaterialTheme {
+        FlutterView(
+            modifier = Modifier.fillMaxSize(),
+            entrypoint = "main",
+            initialRoute = "/",
+        )
+    }
+}
+```
 ## 设置
 
 ### flutter engine dependencies
@@ -37,12 +52,65 @@ kotlin {
     }
 }
 ```
+
+
+
+
+#### android 设置
+
 composeApp/src/androidMain/kotlin/com/lotosbin/kmp/flutter/MainActivity.kt
 
 ```kotlin
 
 class MainActivity : FragmentActivity() {
 //...
+}
+```
+
+#### ios 设置
+iosMain/kotlin/
+```kotlin
+import platform.UIKit.UIViewController
+
+interface FlutterViewFactory {
+    fun create(): UIViewController
+}
+
+fun setFlutterViewFactory(factory: (entrypoint: String, initialRoute: String) -> UIViewController) {
+    println("setFlutterViewFactory=$factory")
+    createFlutterView = factory
+}
+```
+iosApp/
+```swift
+import SwiftUI
+import ComposeApp
+import Flutter
+
+@main
+struct iOSApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+        }
+    }
+}
+
+class AppDelegate: UIResponder, UIApplicationDelegate {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        // Set the factory at app launch using the shared engine.
+        FlutterViewFactoryKt.setFlutterViewFactory(factory: { entrypoint, initialRoute in
+            let engine = FlutterEngine()
+            engine.run(withEntrypoint: entrypoint, initialRoute: initialRoute)
+            return FlutterViewController(
+                engine: engine,
+                nibName: nil,
+                bundle: nil)
+        })
+        return true
+    }
 }
 ```
 
@@ -68,19 +136,6 @@ kotlin {
         androidMain.dependencies {
             implementation("com.lotosbin.kmp.flutter.demo.module.kmp_flutter_demo_module:flutter_release:1.0")
         }
-    }
-}
-```
-### 使用
-```kotlin
-@Composable
-fun App(){
-    MaterialTheme {
-        FlutterView(
-            modifier = Modifier.fillMaxSize(),
-            entrypoint = "main",
-            initialRoute = "/",
-        )
     }
 }
 ```
